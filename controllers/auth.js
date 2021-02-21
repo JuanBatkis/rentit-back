@@ -73,3 +73,19 @@ exports.checkSession = (req, res) => {
   }
   res.status(200).json(null)
 }
+
+exports.changeAvatar = async (req, res) => {
+  const { avatar } = req.body
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { $set: { avatar } },
+    { new: true }
+  )
+
+  const {
+    _doc: { password, ...rest }
+  } = user
+
+  res.status(200).json(rest)
+}

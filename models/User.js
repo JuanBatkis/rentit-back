@@ -16,9 +16,13 @@ const userSchema = new Schema({
     required: [true, 'Please add your last name']
   },
   storeName: String,
+  phone:{
+    type: String,
+    required: [true, 'Please add your phone']
+  },
   password: {
     type: String,
-    required: [true, 'Please add a password'],
+    required: [true, 'Please add your password'],
   },
   rating: {
     type: Number,
