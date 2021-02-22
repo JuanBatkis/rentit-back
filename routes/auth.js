@@ -2,10 +2,11 @@
 const express = require("express")
 const router = express.Router()
 const {
-  checkSession,
   loginProcess,
-  logoutProcess,
   signupProcess,
+  verifyProcess,
+  logoutProcess,
+  checkSession,
   changeAvatar
 } = require("../controllers/auth")
 
@@ -14,6 +15,8 @@ const { isAuth } = require("../middlewares")
 router.post("/login", loginProcess)
 
 router.post("/signup", signupProcess)
+
+router.patch("/verify/:id", verifyProcess)
 
 router.get("/logout", logoutProcess)
 

@@ -14,8 +14,8 @@ const reviewSchema = new Schema({
   description: String
 }, {
   timestamps: {
-    createdAt: 'created_at',
-    updatedAt: 'updated_at'
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   }
 });
 

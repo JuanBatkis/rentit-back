@@ -26,7 +26,7 @@ const userSchema = new Schema({
   },
   rating: {
     type: Number,
-    default: 2.5
+    default: 0
   },
   avatar: String,
   products: [
@@ -63,11 +63,15 @@ const userSchema = new Schema({
     type: String,
     default: 'USER',
     enum: ['ADMIN', 'USER'],
+  },
+  verified: {
+    type: Boolean,
+    default: false,
   }
 }, {
   timestamps: {
-    createdAt: 'created_at',
-    updatedAt: 'updated_at'
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   }
 });
 
