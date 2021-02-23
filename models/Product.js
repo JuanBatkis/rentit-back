@@ -10,6 +10,11 @@ const productSchema = new Schema({
     type: String,
     required: [true, 'Please add a name for your product']
   },
+  category: {
+    type: String,
+    enum: ['Tools', 'Technology', 'Vehicles', 'Sports', 'Other'],
+    required: [true, 'Please add a category for your product']
+  },
   images: {
     type: [String],
     required: [true, 'Please add at least one image']
