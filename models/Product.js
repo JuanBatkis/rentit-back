@@ -12,7 +12,7 @@ const productSchema = new Schema({
   },
   category: {
     type: String,
-    enum: ['Tools', 'Technology', 'Vehicles', 'Sports', 'Other'],
+    enum: ['tools', 'technology', 'vehicles', 'sports', 'other'],
     required: [true, 'Please add a category for your product']
   },
   images: {

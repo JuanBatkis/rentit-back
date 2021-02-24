@@ -40,5 +40,6 @@ require('./passport')(app);
 app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
 app.use('/product', require('./routes/product'));
+app.use('/question', require('./routes/question'));
 
 module.exports = app;

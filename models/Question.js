@@ -11,6 +11,11 @@ const questionSchema = new Schema({
     ref: "Product"
   },
   description: String,
+  status: {
+    type: String,
+    default: 'not-answered',
+    enum: ['not-answered', 'answered'],
+  },
   answer: String
 }, {
   timestamps: {

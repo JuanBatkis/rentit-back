@@ -3,6 +3,7 @@ const express = require("express")
 const router = express.Router()
 const {
   getAllProducts,
+  getProductsByCategory,
   getProductById,
   createProduct,
   updateProduct,
@@ -12,6 +13,8 @@ const {
 const { isAuth, catchErrors } = require("../middlewares")
 
 router.get("/all", catchErrors(getAllProducts))
+
+router.get("/category/:category", catchErrors(getProductsByCategory))
 
 router.get("/:productId", catchErrors(getProductById))
 

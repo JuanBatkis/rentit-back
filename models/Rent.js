@@ -17,7 +17,12 @@ const rentSchema = new Schema({
   total: Number,
   rentedFrom: Date,
   rentedTo: Date,
-  extendedTo: Date
+  extendedTo: Date,
+  status: {
+    type: String,
+    default: 'in-progress',
+    enum: ['in-progress', 'finished', 'cancelled'],
+  }
 }, {
   timestamps: {
     createdAt: 'createdAt',

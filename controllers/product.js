@@ -5,10 +5,20 @@ exports.getAllProducts = async (req, res) => {
   const products = await Product.find()
   res.status(200).json({ products })
 }
+
+exports.getProductsByCategory = async (req, res) => {
+  const { category } = req.params
+
+  const products = await Product.find({ category })
+  res.status(200).json({ products })
+}
+
 exports.getProductById = async (req, res) => {
   const { productId } = req.params
 
   const product = await Product.findById(productId)
+    .populate("owner","email firstName lastName storeName phone rating")
+    .populate("questions","description answer")
   res.status(200).json(product)
 }
 
@@ -42,7 +52,7 @@ exports.updateProduct = async (req, res) => {
   const product = await Product.findById(productId)
 
   if (product.owner.toString() !== req.user._id.toString()) {
-    return res.status(401).json({ message: "Unauthorized lol" })
+    return res.status(401).json({ message: "Unauthorized" })
   }
 
   const productNew = await Product.findByIdAndUpdate(
@@ -53,6 +63,7 @@ exports.updateProduct = async (req, res) => {
 
   res.status(200).json(productNew)
 }
+
 exports.deleteProduct = async (req, res) => {
   const { productId } = req.params
 
