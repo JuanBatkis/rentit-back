@@ -24,10 +24,6 @@ const userSchema = new Schema({
     type: String,
     required: [true, 'Please add your password'],
   },
-  rating: {
-    type: Number,
-    default: 0
-  },
   avatar: String,
   products: [
     {
@@ -47,6 +43,24 @@ const userSchema = new Schema({
       ref: "Rent"
     }
   ],
+  rating: {
+    type: {
+      total: Number,
+      one: Number,
+      two: Number,
+      three: Number,
+      four: Number,
+      five: Number
+    },
+    default: {
+      total: 0,
+      one: 0,
+      two: 0,
+      three: 0,
+      four: 0,
+      five: 0
+    }
+  },
   reviews: [
     {
       type: Schema.Types.ObjectId,

@@ -28,7 +28,24 @@ const productSchema = new Schema({
     type: String,
   },
   nextAvailable: Date,
-  rating: Number,
+  rating: {
+    type: {
+      total: Number,
+      one: Number,
+      two: Number,
+      three: Number,
+      four: Number,
+      five: Number
+    },
+    default: {
+      total: 0,
+      one: 0,
+      two: 0,
+      three: 0,
+      four: 0,
+      five: 0
+    }
+  },
   reviews: [
     {
       type: Schema.Types.ObjectId,
