@@ -40,6 +40,7 @@ require('./passport')(app);
 app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
 app.use('/product', require('./routes/product'));
+app.use('/rent', require('./routes/rent'));
 app.use('/question', require('./routes/question'));
 app.use('/review', require('./routes/review'));
 
