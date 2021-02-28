@@ -117,3 +117,26 @@ exports.changeAvatar = async (req, res) => {
 
   res.status(200).json(rest)
 }
+
+exports.googleInit = passport.authenticate('google', {
+  scope: [
+    "https://www.googleapis.com/auth/userinfo.profile",
+    "https://www.googleapis.com/auth/userinfo.email"
+  ]
+})
+
+exports.googleCallback = (req, res, next) => {
+  passport.authenticate(
+    'google',
+    { scope: ['profile', 'email'] },
+    (err, user, errDetails) => {
+      if (err) return res.status(500).json({message: errDetails})
+      if (!user) return res.status(500).json({message: errDetails})
+
+      req.login(user, err => {
+        if (err) return res.status(500).json({message: errDetails})
+        res.redirect('http://localhost:3000')
+      })
+    }
+  )(req, res, next)
+}

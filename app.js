@@ -29,7 +29,7 @@ app.use(cookieParser());
 
 // Enable authentication using session + passport
 app.use(session({
-  secret: 'irongenerator',
+  secret: process.env.SECRET,
   resave: true,
   saveUninitialized: true,
   store: new MongoStore( { mongooseConnection: mongoose.connection })

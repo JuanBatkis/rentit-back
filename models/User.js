@@ -81,7 +81,9 @@ const userSchema = new Schema({
   verified: {
     type: Boolean,
     default: false,
-  }
+  },
+  googleID: String,
+  facebookID: String
 }, {
   timestamps: {
     createdAt: 'createdAt',
