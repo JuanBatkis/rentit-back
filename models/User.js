@@ -4,26 +4,13 @@ const Schema   = mongoose.Schema;
 const userSchema = new Schema({
   email: {
     type: String,
-    required: [true, 'Please add your email'],
     unique: true
   },
-  firstName: {
-    type: String,
-    required: [true, 'Please add your name']
-  },
-  lastName: {
-    type: String,
-    required: [true, 'Please add your last name']
-  },
+  firstName: String,
+  lastName: String,
   storeName: String,
-  phone:{
-    type: String,
-    required: [true, 'Please add your phone']
-  },
-  password: {
-    type: String,
-    required: [true, 'Please add your password'],
-  },
+  phone: String,
+  password: String,
   avatar: String,
   products: [
     {

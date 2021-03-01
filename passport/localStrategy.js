@@ -1,6 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const FacebookStrategy = require("passport-facebook").Strategy;
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 
@@ -34,24 +35,54 @@ passport.use(
       clientSecret: process.env.GOOGLE_SECRET,
       callbackURL: process.env.GOOGLE_CALLBACK
     },
-    (_, __, profile, done) => {
+    async (_, __, profile, done) => {
       // to see the structure of the data in received response:
       console.log("Google account details:", profile);
 
-      User.findOne({ googleID: profile.id })
-        .then(user => {
-          if (user) {
-            done(null, user);
-            return;
-          }
+      const user = await User.findOne({googleID: profile.id})
+      if (user) {
+        return done(null, user)
+      }
 
-          User.create({ googleID: profile.id })
-            .then(newUser => {
-              done(null, newUser);
-            })
-            .catch(err => done(err)); // closes User.create()
-        })
-        .catch(err => done(err)); // closes User.findOne()
+      const newUser = await User.create({
+        googleID: profile.id,
+        email: profile.emails[0].value,
+        firstName: profile.name.givenName,
+        lastName: profile.name.familyName,
+        avatar: profile.photos[0].value
+      })
+
+      return done(null, newUser)
+    }
+  )
+);
+
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: process.env.FACEBOOK_ID,
+      clientSecret: process.env.FACEBOOK_SECRET,
+      callbackURL: process.env.FACEBOOK_CALLBACK,
+      profileFields: ['id', 'email', 'photos', 'name']
+    },
+    async (_, __, profile, done) => {
+      // to see the structure of the data in received response:
+      console.log("Facebook account details:", profile);
+
+      const user = await User.findOne({facebookID: profile.id})
+      if (user) {
+        return done(null, user)
+      }
+
+      const newUser = await User.create({
+        facebookID: profile.id,
+        email: profile.emails[0].value,
+        firstName: profile.name.givenName,
+        lastName: profile.name.familyName,
+        avatar: profile.photos[0].value
+      })
+
+      return done(null, newUser)
     }
   )
 );

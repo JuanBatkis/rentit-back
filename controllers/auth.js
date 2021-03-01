@@ -140,3 +140,25 @@ exports.googleCallback = (req, res, next) => {
     }
   )(req, res, next)
 }
+
+exports.facebookInit = passport.authenticate('facebook', {
+  scope: [
+    "email"
+  ]
+})
+
+exports.facebookCallback = (req, res, next) => {
+  passport.authenticate(
+    'facebook',
+    { scope: ['email'] },
+    (err, user, errDetails) => {
+      if (err) return res.status(500).json({message: errDetails})
+      if (!user) return res.status(500).json({message: errDetails})
+
+      req.login(user, err => {
+        if (err) return res.status(500).json({message: errDetails})
+        res.redirect('http://localhost:3000')
+      })
+    }
+  )(req, res, next)
+}

@@ -9,7 +9,9 @@ const {
   checkSession,
   changeAvatar,
   googleInit,
-  googleCallback
+  googleCallback,
+  facebookInit,
+  facebookCallback
 } = require("../controllers/auth")
 
 const { isAuth, catchErrors } = require("../middlewares")
@@ -29,5 +31,9 @@ router.post("/avatar/change", isAuth, catchErrors(changeAvatar))
 router.get("/google", googleInit)
 
 router.get("/google/callback", googleCallback)
+
+router.get("/facebook", facebookInit)
+
+router.get("/facebook/callback", facebookCallback)
 
 module.exports = router
