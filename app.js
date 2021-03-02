@@ -8,6 +8,7 @@ const logger       = require('morgan');
 const session    = require("express-session");
 const MongoStore = require('connect-mongo')(session);
 const flash      = require("connect-flash");
+const cors       = require('cors')
 
 
 mongoose
@@ -26,6 +27,12 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: ['http://localhost:3000'],
+    credentials: true
+  })
+)
 
 // Enable authentication using session + passport
 app.use(session({

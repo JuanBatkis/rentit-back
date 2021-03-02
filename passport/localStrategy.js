@@ -49,7 +49,8 @@ passport.use(
         email: profile.emails[0].value,
         firstName: profile.name.givenName,
         lastName: profile.name.familyName,
-        avatar: profile.photos[0].value
+        avatar: profile.photos[0].value,
+        verified: true
       })
 
       return done(null, newUser)
@@ -79,7 +80,8 @@ passport.use(
         email: profile.emails[0].value,
         firstName: profile.name.givenName,
         lastName: profile.name.familyName,
-        avatar: profile.photos[0].value
+        avatar: profile.photos[0].value,
+        verified: true
       })
 
       return done(null, newUser)

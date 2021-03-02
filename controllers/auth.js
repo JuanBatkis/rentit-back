@@ -18,7 +18,7 @@ exports.loginProcess = (req, res, next) => {
         res.status(200).json(cleanUser)
       })
     } else {
-      res.status(403).json({msg: `Please verify your email address before logging in`})
+      res.status(403).json({message: `Please verify your email address before logging in`})
     }
 
   })(req, res, next)
