@@ -38,8 +38,6 @@ exports.loginProcess = (req, res, next) => {
 exports.signupProcess = (req, res, next) => {
   const { email, password, confirmPassword, firstName, lastName, storeName, phone } = req.body
 
-  console.log(req.body);
-
   let missingFields = []
   email === "" || email === undefined && missingFields.push('email')
   password === "" || password === undefined && missingFields.push('password')
