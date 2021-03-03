@@ -1,15 +1,26 @@
 
 const User = require("../models/User")
 const passport = require("passport")
-const {clearRes} = require('../utils/auth');
+const {clearRes, getMissingMessage} = require('../utils/auth');
 // Bcrypt to encrypt passwords
 const bcrypt = require("bcrypt")
 const bcryptSalt = 10
 
 exports.loginProcess = (req, res, next) => {
+  const { email, password } = req.body
+
+  let missingFields = []
+  email === "" || email === undefined && missingFields.push('email')
+  password === "" || password === undefined && missingFields.push('password')
+
+  const missingMessage = getMissingMessage(missingFields)
+  if (missingMessage) {
+    return res.status(400).json({ message: missingMessage })
+  }
+
   passport.authenticate("local", (error, user, errDetails) => {
     if (error) return res.status(500).json({ message: errDetails })
-    if (!user) return res.status(401).json({ message: "Unauthorized" })
+    if (!user) return res.status(401).json({ message: "Incorrect email or password" })
 
     if (user.verified) {
       req.login(user, error => {
@@ -25,25 +36,26 @@ exports.loginProcess = (req, res, next) => {
 }
 
 exports.signupProcess = (req, res, next) => {
-  const { email, password, firstName, lastName, storeName, phone } = req.body
+  const { email, password, confirmPassword, firstName, lastName, storeName, phone } = req.body
+
+  console.log(req.body);
 
   let missingFields = []
-  email === "" && missingFields.push('email')
-  password === "" && missingFields.push('password')
-  firstName === "" && missingFields.push('first name')
-  lastName === "" && missingFields.push('last name')
-  phone === "" && missingFields.push('phone number')
+  email === "" || email === undefined && missingFields.push('email')
+  password === "" || password === undefined && missingFields.push('password')
+  confirmPassword === "" || confirmPassword === undefined && missingFields.push('confirm password')
+  firstName === "" || firstName === undefined && missingFields.push('first name')
+  lastName === "" || lastName === undefined && missingFields.push('last name')
+  phone === "" || phone === undefined && missingFields.push('phone number')
 
-  if (missingFields.length === 1) {
-    res.status(400).json({ message: `Please indicate your ${missingFields[0]}` })
-    return
-  } else if(missingFields.length > 1) {
-    let fullError = missingFields[0]
-    for (let i = 1; i < missingFields.length; i++) {
-      i === (missingFields.length - 1) ? fullError += ` and ${missingFields[i]}` : fullError += `, ${missingFields[i]}`
-    }
-    res.status(400).json({ message: `Please indicate your ${fullError}` })
-    return
+  const missingMessage = getMissingMessage(missingFields)
+  if (missingMessage) {
+    return res.status(400).json({ message: missingMessage })
+  }
+
+
+  if (password !== confirmPassword) {
+    return res.status(400).json({ message: 'Your password and confirmation do not match' })
   }
 
   User.findOne({ email }, "email", (err, user) => {

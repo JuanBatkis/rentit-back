@@ -7,3 +7,17 @@ exports.clearRes = (data) => {
 
   return cleanedData;
 }
+
+exports.getMissingMessage = (missingFields) => {
+  if (missingFields.length === 1) {
+    return `Please indicate your ${missingFields[0]}`
+  } else if(missingFields.length > 1) {
+    let fullError = missingFields[0]
+    for (let i = 1; i < missingFields.length; i++) {
+      i === (missingFields.length - 1) ? fullError += ` and ${missingFields[i]}` : fullError += `, ${missingFields[i]}`
+    }
+    return `Please indicate your ${fullError}`
+  }
+
+  return false
+}
