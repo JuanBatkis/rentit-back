@@ -25,7 +25,7 @@ exports.getProductById = async (req, res) => {
 exports.createProduct = async (req, res) => {
   const { name, category, description, images, priceHour, priceDay } = req.body
 
-  if (!['Tools', 'Technology', 'Vehicles', 'Sports', 'Other'].includes(category)) {
+  if (!['tools', 'technology', 'vehicles', 'sports', 'other'].includes(category)) {
     return res.status(400).json({ message: "Please select one of the allowed categories" })
   }
 
