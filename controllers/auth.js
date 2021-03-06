@@ -145,7 +145,7 @@ exports.googleCallback = (req, res, next) => {
 
       req.login(user, err => {
         if (err) return res.status(500).json({message: errDetails})
-        res.redirect('http://localhost:3000')
+        res.redirect(process.env.ENV === 'development' ? 'http://localhost:3000' : 'https://rentit-project.herokuapp.com')
       })
     }
   )(req, res, next)
@@ -167,7 +167,7 @@ exports.facebookCallback = (req, res, next) => {
 
       req.login(user, err => {
         if (err) return res.status(500).json({message: errDetails})
-        res.redirect('http://localhost:3000')
+        res.redirect(process.env.ENV === 'development' ? 'http://localhost:3000' : 'https://rentit-project.herokuapp.com')
       })
     }
   )(req, res, next)
