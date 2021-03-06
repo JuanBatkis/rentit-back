@@ -12,7 +12,7 @@ const cors       = require('cors')
 
 
 mongoose
-  .connect('mongodb://localhost/rentit-back', {useNewUrlParser: true})
+  .connect(process.env.DB, {useNewUrlParser: true})
   .then(x => {
     console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`)
   })
@@ -33,6 +33,7 @@ app.use(
     credentials: true
   })
 )
+app.use(express.static('public'))
 
 // Enable authentication using session + passport
 app.use(session({
@@ -44,11 +45,15 @@ app.use(session({
 app.use(flash());
 require('./passport')(app);
 
-app.use('/', require('./routes/index'));
-app.use('/auth', require('./routes/auth'));
-app.use('/product', require('./routes/product'));
-app.use('/rent', require('./routes/rent'));
-app.use('/question', require('./routes/question'));
-app.use('/review', require('./routes/review'));
+app.use('/api/', require('./routes/index'));
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/product', require('./routes/product'));
+app.use('/api/rent', require('./routes/rent'));
+app.use('/api/question', require('./routes/question'));
+app.use('/api/review', require('./routes/review'));
+
+app.use('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'))
+});
 
 module.exports = app;
