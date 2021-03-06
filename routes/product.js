@@ -5,6 +5,7 @@ const {
   getAllProducts,
   getProductsByCategory,
   getProductById,
+  getUserProducts,
   createProduct,
   updateProduct,
   deleteProduct
@@ -12,11 +13,13 @@ const {
 
 const { isAuth, catchErrors } = require("../middlewares")
 
-router.get("/all", catchErrors(getAllProducts))
+router.get("/all/:limit", catchErrors(getAllProducts))
 
 router.get("/category/:category", catchErrors(getProductsByCategory))
 
 router.get("/:productId", catchErrors(getProductById))
+
+router.get("/user/:userId/:limit", isAuth, catchErrors(getUserProducts))
 
 router.post("/", isAuth, catchErrors(createProduct))
 

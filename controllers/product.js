@@ -2,7 +2,8 @@ const Product = require("../models/Product")
 const User = require("../models/User")
 
 exports.getAllProducts = async (req, res) => {
-  const products = await Product.find()
+  const { limit } = req.params
+  const products = await Product.find().sort({createdAt: -1}).limit(parseInt(limit))
   res.status(200).json({ products })
 }
 
@@ -20,6 +21,13 @@ exports.getProductById = async (req, res) => {
     .populate("owner","email firstName lastName storeName phone rating")
     .populate("questions","description answer")
   res.status(200).json(product)
+}
+
+exports.getUserProducts = async (req, res) => {
+  const { userId, limit } = req.params
+
+  const products = await Product.find({'owner': userId}).sort({createdAt: -1}).limit(parseInt(limit))
+  res.status(200).json({ products })
 }
 
 exports.createProduct = async (req, res) => {
