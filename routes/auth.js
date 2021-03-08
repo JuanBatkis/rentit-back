@@ -8,6 +8,7 @@ const {
   logoutProcess,
   checkSession,
   changeAvatar,
+  changeLocation,
   googleInit,
   googleCallback,
   facebookInit,
@@ -26,7 +27,9 @@ router.get("/logout", logoutProcess)
 
 router.get("/session", checkSession)
 
-router.post("/avatar/change", isAuth, catchErrors(changeAvatar))
+router.patch("/avatar/change", isAuth, catchErrors(changeAvatar))
+
+router.patch("/location/change", isAuth, catchErrors(changeLocation))
 
 router.get("/google", googleInit)
 

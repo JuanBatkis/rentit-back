@@ -60,6 +60,10 @@ const userSchema = new Schema({
       ref: "Question"
     }
   ],
+  location: {
+    type: { type: String },
+    coordinates: [ Number ]
+  },
   role: {
     type: String,
     default: 'USER',
@@ -77,6 +81,8 @@ const userSchema = new Schema({
     updatedAt: 'updatedAt'
   }
 });
+
+userSchema.index({ location: '2dsphere' });
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;

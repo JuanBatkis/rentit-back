@@ -128,6 +128,27 @@ exports.changeAvatar = async (req, res) => {
   res.status(200).json(rest)
 }
 
+exports.changeLocation = async (req, res) => {
+  const { lat, lng } = req.body
+
+  const location= {
+    type: 'Point',
+    coordinates: [lng, lat]
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { $set: { location } },
+    { new: true }
+  )
+
+  const {
+    _doc: { password, ...rest }
+  } = user
+
+  res.status(200).json(rest)
+}
+
 exports.googleInit = passport.authenticate('google', {
   scope: [
     "https://www.googleapis.com/auth/userinfo.profile",
