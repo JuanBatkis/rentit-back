@@ -3,14 +3,14 @@ const User = require("../models/User")
 
 exports.getAllProducts = async (req, res) => {
   const { limit } = req.params
-  const products = await Product.find().sort({createdAt: -1}).limit(parseInt(limit))
+  const products = await Product.find().sort({createdAt: -1}).limit(parseInt(limit)).populate("owner","location")
   res.status(200).json({ products })
 }
 
 exports.getProductsByCategory = async (req, res) => {
   const { category } = req.params
 
-  const products = await Product.find({ category })
+  const products = await Product.find({ category }).populate("owner","location")
   res.status(200).json({ products })
 }
 

@@ -129,7 +129,7 @@ exports.changeAvatar = async (req, res) => {
 }
 
 exports.changeLocation = async (req, res) => {
-  const { lat, lng } = req.body
+  const { lng, lat } = req.body
 
   const location= {
     type: 'Point',
