@@ -7,10 +7,20 @@ exports.getAllProducts = async (req, res) => {
   res.status(200).json({ products })
 }
 
-exports.getProductsByCategory = async (req, res) => {
-  const { category } = req.params
+exports.getProductsByQuery = async (req, res) => {
+  const { limit, category, center, radious } = req.body
 
-  const products = await Product.find({ category }).populate("owner","location")
+  console.log(req.body);
+
+  /* const products = await Product.find({
+    location: { $geoWithin: { $centerSphere: [ center, radious/6371 ] } }
+  }).sort({createdAt: -1}).populate("owner","location") */
+  const products = await Product.find().sort({createdAt: -1}).populate({
+    path: 'owner',
+    location: { $geoWithin: { $centerSphere: [ center, radious/63710 ] } }
+  })
+  //const products = await Product.find({ category }).populate("owner","location")
+  console.log(products);
   res.status(200).json({ products })
 }
 

@@ -3,7 +3,7 @@ const express = require("express")
 const router = express.Router()
 const {
   getAllProducts,
-  getProductsByCategory,
+  getProductsByQuery,
   getProductById,
   getUserProducts,
   createProduct,
@@ -15,7 +15,7 @@ const { isAuth, catchErrors } = require("../middlewares")
 
 router.get("/all/:limit", catchErrors(getAllProducts))
 
-router.get("/category/:category", catchErrors(getProductsByCategory))
+router.post("/query", catchErrors(getProductsByQuery))
 
 router.get("/:productId", catchErrors(getProductById))
 
