@@ -1,10 +1,21 @@
 
 const User = require("../models/User")
 const passport = require("passport")
-const {clearRes, getMissingMessage} = require('../utils/auth');
+const {clearRes, getMissingMessage} = require('../utils/auth')
+const {sendEmail} = require('../utils/emailTemplate')
+const { catchErrors } = require("../middlewares")
+const nodemailer = require("nodemailer")
 // Bcrypt to encrypt passwords
 const bcrypt = require("bcrypt")
 const bcryptSalt = 10
+
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {
+    user: process.env.EMAIL,
+    pass: process.env.PASS
+  }
+})
 
 exports.loginProcess = (req, res, next) => {
   const { email, password } = req.body
@@ -77,7 +88,9 @@ exports.signupProcess = (req, res, next) => {
     newUser
       .save()
       .then((newUser) => {
+        console.log('user');
         const user = clearRes(newUser)
+        catchErrors(sendEmail(email, firstName, user._id, transporter))
         res.status(200).json(user)
       })
       .catch(err => {
@@ -87,7 +100,7 @@ exports.signupProcess = (req, res, next) => {
 }
 
 exports.verifyProcess = async (req, res, next) => {
-  const { id } = req.params
+  const { id } = req.body
 
   const user = await User.findByIdAndUpdate(
     id,

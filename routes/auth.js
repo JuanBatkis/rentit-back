@@ -21,7 +21,7 @@ router.post("/login", loginProcess)
 
 router.post("/signup", signupProcess)
 
-router.patch("/verify/:id", catchErrors(verifyProcess))
+router.patch("/verify", catchErrors(verifyProcess))
 
 router.get("/logout", logoutProcess)
 
