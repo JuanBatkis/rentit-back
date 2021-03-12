@@ -88,7 +88,6 @@ exports.signupProcess = (req, res, next) => {
     newUser
       .save()
       .then((newUser) => {
-        console.log('user');
         const user = clearRes(newUser)
         catchErrors(sendEmail(email, firstName, user._id, transporter))
         res.status(200).json(user)
@@ -114,6 +113,7 @@ exports.verifyProcess = async (req, res, next) => {
 
 exports.logoutProcess = (req, res) => {
   req.logout()
+  req.session.destroy((error) => console.log(error))
   res.json({ message: "loggedout" })
 }
 

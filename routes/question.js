@@ -5,7 +5,7 @@ const {
   getAllProductQuestions,
   getUserQuestions,
   createQuestion,
-  respondQuestion,
+  answerQuestion,
   deleteQuestion
 } = require("../controllers/question")
 
@@ -17,7 +17,7 @@ router.get("/user-question/:userId/:status", isAuth, catchErrors(getUserQuestion
 
 router.post("/", isAuth, catchErrors(createQuestion))
 
-router.patch("/:questionId", isAuth, catchErrors(respondQuestion))
+router.patch("/:questionId", isAuth, catchErrors(answerQuestion))
 
 router.delete("/:questionId", isAuth, catchErrors(deleteQuestion))
 

@@ -11,18 +11,25 @@ exports.getAllProductQuestions = async (req, res) => {
 
 exports.getUserQuestions = async (req, res) => {
   const { userId, status } = req.params
+  let questions
 
-  const questions = await Question.find({'user': userId, status})
+  if (status) {
+    questions = await Question.find({'user': userId, status}).populate("product","name")
+  } else {
+    questions = await Question.find({'user': userId}).populate("product","name")
+  }
+
   res.status(200).json({ questions })
 }
 
 exports.createQuestion = async (req, res) => {
-  const { product, description } = req.body
+  const { product, owner, description } = req.body
 
   const question = await Question.create({
     user: req.user._id,
     product,
-    description,
+    owner,
+    description
   })
   await User.findByIdAndUpdate(req.user._id, {
     $push: { questions: question._id }
@@ -34,14 +41,13 @@ exports.createQuestion = async (req, res) => {
   res.status(201).json(question)
 }
 
-exports.respondQuestion = async (req, res) => {
+exports.answerQuestion = async (req, res) => {
   const { questionId } = req.params
   const { answer } = req.body
 
   const question = await Question.findById(questionId)
-    .populate("product","owner")
 
-  if (question.product.owner.toString() !== req.user._id.toString()) {
+  if (question.owner.toString() !== req.user._id.toString()) {
     return res.status(401).json({ message: "Unauthorized" })
   }
 
