@@ -9,6 +9,7 @@ const session    = require("express-session");
 const MongoStore = require('connect-mongo')(session);
 const flash      = require("connect-flash");
 const cors       = require('cors')
+const path       = require("path")
 
 
 mongoose
@@ -29,11 +30,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ['http://localhost:3000'],
+    origin: ['http://localhost:3000', 'https://rentit-project.herokuapp.com'],
     credentials: true
   })
 )
-app.use(express.static('public'))
+app.use(express.static(path.join(__dirname, 'public')))
 
 // Enable authentication using session + passport
 app.use(session({

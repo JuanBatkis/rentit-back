@@ -17,12 +17,17 @@ const rentSchema = new Schema({
   total: Number,
   rentedFrom: Date,
   rentedTo: Date,
+  type: {
+    type: String,
+    enum: ['hour', 'day'],
+  },
   extendedTo: Date,
   status: {
     type: String,
-    default: 'in-progress',
-    enum: ['in-progress', 'finished', 'cancelled'],
-  }
+    default: 'pending',
+    enum: ['pending', 'in-progress', 'finished', 'cancelled'],
+  },
+  preferenceId: String
 }, {
   timestamps: {
     createdAt: 'createdAt',

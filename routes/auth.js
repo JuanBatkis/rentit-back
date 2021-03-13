@@ -7,7 +7,9 @@ const {
   verifyProcess,
   logoutProcess,
   checkSession,
+  changeInfo,
   changeAvatar,
+  changeLocation,
   googleInit,
   googleCallback,
   facebookInit,
@@ -20,13 +22,17 @@ router.post("/login", loginProcess)
 
 router.post("/signup", signupProcess)
 
-router.patch("/verify/:id", catchErrors(verifyProcess))
+router.patch("/verify", catchErrors(verifyProcess))
 
 router.get("/logout", logoutProcess)
 
 router.get("/session", checkSession)
 
-router.post("/avatar/change", isAuth, catchErrors(changeAvatar))
+router.patch("/info/change", isAuth, catchErrors(changeInfo))
+
+router.patch("/avatar/change", isAuth, catchErrors(changeAvatar))
+
+router.patch("/location/change", isAuth, catchErrors(changeLocation))
 
 router.get("/google", googleInit)
 

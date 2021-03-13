@@ -44,6 +44,16 @@ passport.use(
         return done(null, user)
       }
 
+      const sameEmail = await User.findOne({email: profile.emails[0].value})
+      if (sameEmail) {
+        const user = await User.findByIdAndUpdate(
+          sameEmail._id,
+          { $set: { googleID: profile.id } },
+          { new: true }
+        )
+        return done(null, user)
+      }
+
       const newUser = await User.create({
         googleID: profile.id,
         email: profile.emails[0].value,
@@ -72,6 +82,16 @@ passport.use(
 
       const user = await User.findOne({facebookID: profile.id})
       if (user) {
+        return done(null, user)
+      }
+
+      const sameEmail = await User.findOne({email: profile.emails[0].value})
+      if (sameEmail) {
+        const user = await User.findByIdAndUpdate(
+          sameEmail._id,
+          { $set: { facebookID: profile.id } },
+          { new: true }
+        )
         return done(null, user)
       }
 

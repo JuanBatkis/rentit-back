@@ -1,10 +1,21 @@
 
 const User = require("../models/User")
 const passport = require("passport")
-const {clearRes, getMissingMessage} = require('../utils/auth');
+const {clearRes, getMissingMessage} = require('../utils/auth')
+const {sendEmail} = require('../utils/emailTemplate')
+const { catchErrors } = require("../middlewares")
+const nodemailer = require("nodemailer")
 // Bcrypt to encrypt passwords
 const bcrypt = require("bcrypt")
 const bcryptSalt = 10
+
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {
+    user: process.env.EMAIL,
+    pass: process.env.PASS
+  }
+})
 
 exports.loginProcess = (req, res, next) => {
   const { email, password } = req.body
@@ -78,6 +89,7 @@ exports.signupProcess = (req, res, next) => {
       .save()
       .then((newUser) => {
         const user = clearRes(newUser)
+        catchErrors(sendEmail(email, firstName, user._id, transporter))
         res.status(200).json(user)
       })
       .catch(err => {
@@ -87,7 +99,7 @@ exports.signupProcess = (req, res, next) => {
 }
 
 exports.verifyProcess = async (req, res, next) => {
-  const { id } = req.params
+  const { id } = req.body
 
   const user = await User.findByIdAndUpdate(
     id,
@@ -101,6 +113,7 @@ exports.verifyProcess = async (req, res, next) => {
 
 exports.logoutProcess = (req, res) => {
   req.logout()
+  req.session.destroy((error) => console.log(error))
   res.json({ message: "loggedout" })
 }
 
@@ -112,12 +125,49 @@ exports.checkSession = (req, res) => {
   res.status(200).json(null)
 }
 
+exports.changeInfo = async (req, res) => {
+  const { firstName, lastName, storeName, phone } = req.body
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { firstName, lastName, storeName, phone },
+    { new: true }
+  )
+
+  const {
+    _doc: { password, ...rest }
+  } = user
+
+  res.status(200).json(rest)
+}
+
 exports.changeAvatar = async (req, res) => {
   const { avatar } = req.body
 
   const user = await User.findByIdAndUpdate(
     req.user._id,
     { $set: { avatar } },
+    { new: true }
+  )
+
+  const {
+    _doc: { password, ...rest }
+  } = user
+
+  res.status(200).json(rest)
+}
+
+exports.changeLocation = async (req, res) => {
+  const { lng, lat } = req.body
+
+  const location= {
+    type: 'Point',
+    coordinates: [lng, lat]
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { $set: { location } },
     { new: true }
   )
 
@@ -145,7 +195,7 @@ exports.googleCallback = (req, res, next) => {
 
       req.login(user, err => {
         if (err) return res.status(500).json({message: errDetails})
-        res.redirect('http://localhost:3000')
+        res.redirect(process.env.ENV === 'development' ? 'http://localhost:3000' : 'https://rentit-project.herokuapp.com')
       })
     }
   )(req, res, next)
@@ -167,7 +217,7 @@ exports.facebookCallback = (req, res, next) => {
 
       req.login(user, err => {
         if (err) return res.status(500).json({message: errDetails})
-        res.redirect('http://localhost:3000')
+        res.redirect(process.env.ENV === 'development' ? 'http://localhost:3000' : 'https://rentit-project.herokuapp.com')
       })
     }
   )(req, res, next)

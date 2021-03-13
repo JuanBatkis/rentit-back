@@ -2,27 +2,23 @@
 const express = require("express")
 const router = express.Router()
 const {
-  getAllProducts,
-  getProductsByCategory,
-  getProductById,
-  createProduct,
-  updateProduct,
-  deleteProduct
-} = require("../controllers/product")
+  getAllUserRents,
+  getRentById,
+  getRentPreference,
+  createRent,
+  updateRent
+} = require("../controllers/rent")
 
 const { isAuth, catchErrors } = require("../middlewares")
 
-router.get("/all", catchErrors(getAllProducts))
+router.get("/all/:role", isAuth, catchErrors(getAllUserRents))
 
-router.get("/category/:category", catchErrors(getProductsByCategory))
+router.get("/:rentId", isAuth, catchErrors(getRentById))
 
-router.get("/:productId", catchErrors(getProductById))
+router.post("/preference", isAuth, catchErrors(getRentPreference))
 
-router.post("/", isAuth, catchErrors(createProduct))
+router.post("/", isAuth, catchErrors(createRent))
 
-router.patch("/:productId", isAuth, catchErrors(updateProduct))
-
-router.delete("/:productId", isAuth, catchErrors(deleteProduct))
-
+router.patch("/update", isAuth, catchErrors(updateRent))
 
 module.exports = router

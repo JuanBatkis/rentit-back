@@ -10,7 +10,7 @@ exports.createReview = async (req, res) => {
       owner: req.user._id,
       user: userId,
       rating,
-      description,
+      //description,
     })
 
     const user = await User.findById(userId)
@@ -56,7 +56,7 @@ exports.createReview = async (req, res) => {
       owner: req.user._id,
       product: productId,
       rating,
-      description,
+      //description,
     })
 
     const product = await Product.findById(productId)

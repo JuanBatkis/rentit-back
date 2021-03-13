@@ -3,22 +3,40 @@ const User = require("../models/User")
 
 exports.getAllProducts = async (req, res) => {
   const { limit } = req.params
-  const products = await Product.find().sort({createdAt: -1}).limit(parseInt(limit))
+  const products = await Product.find().sort({createdAt: -1}).limit(parseInt(limit)).populate("owner","location")
   res.status(200).json({ products })
 }
 
-exports.getProductsByCategory = async (req, res) => {
-  const { category } = req.params
+exports.getProductsByQuery = async (req, res) => {
+  const { limit, category, center, radius } = req.body
 
-  const products = await Product.find({ category })
-  res.status(200).json({ products })
+  try {
+    const ownersInRadious = await User.find({
+      location: { $geoWithin: { $centerSphere: [ center, radius/6371 ] } }
+    }, '_id')
+    const onlyIds = ownersInRadious.map(owner => owner._id)
+
+    if (category === 'all') {
+      const products = await Product.find({
+        owner: { $in: onlyIds }
+      }).sort({createdAt: -1})
+      res.status(200).json({ products })
+    } else {
+      const products = await Product
+        .find({$and: [{owner: { $in: onlyIds }}, { category }]})
+        .sort({createdAt: -1})
+      res.status(200).json({ products })
+    }
+  } catch (error) {
+    res.status(403).json({ message: error })
+  }
 }
 
 exports.getProductById = async (req, res) => {
   const { productId } = req.params
 
   const product = await Product.findById(productId)
-    .populate("owner","email firstName lastName storeName phone rating")
+    .populate("owner","email firstName lastName storeName phone rating location")
     .populate("questions","description answer")
   res.status(200).json(product)
 }
