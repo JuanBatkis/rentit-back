@@ -13,7 +13,7 @@ const { isAuth, catchErrors } = require("../middlewares")
 
 router.get("/prod-question/:productId", catchErrors(getAllProductQuestions))
 
-router.get("/user-question/:userId/:status", isAuth, catchErrors(getUserQuestions))
+router.get("/user-question/:role", isAuth, catchErrors(getUserQuestions))
 
 router.post("/", isAuth, catchErrors(createQuestion))
 

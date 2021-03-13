@@ -10,13 +10,19 @@ exports.getAllProductQuestions = async (req, res) => {
 }
 
 exports.getUserQuestions = async (req, res) => {
-  const { userId, status } = req.params
+  const { role } = req.params
   let questions
 
-  if (status) {
-    questions = await Question.find({'user': userId, status}).populate("product","name")
+  if (role === 'renter') {
+    questions = await Question
+      .find({'user': req.user._id})
+      .populate("product","name")
+      .populate("owner","firstName storeName")
   } else {
-    questions = await Question.find({'user': userId}).populate("product","name")
+    questions = await Question
+      .find({'owner': req.user._id})
+      .populate("product","name")
+      .populate("user","firstName")
   }
 
   res.status(200).json({ questions })
@@ -57,7 +63,7 @@ exports.answerQuestion = async (req, res) => {
 
   const questionNew = await Question.findByIdAndUpdate(
     questionId,
-    { answer },
+    { answer, status: 'answered' },
     { new: true }
   )
 

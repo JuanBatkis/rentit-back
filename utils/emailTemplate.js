@@ -1,5 +1,4 @@
 exports.sendEmail = async (email, name, id, transporter) => {
-  console.log(id);
   const baseUrl = (process.env.ENV === 'development' ? 'http://localhost:3000' : 'https://rentit-project.herokuapp.com')
   const activateUrl = `${baseUrl}/activate/${id}`
   await transporter.sendMail({

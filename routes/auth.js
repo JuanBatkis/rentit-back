@@ -7,6 +7,7 @@ const {
   verifyProcess,
   logoutProcess,
   checkSession,
+  changeInfo,
   changeAvatar,
   changeLocation,
   googleInit,
@@ -26,6 +27,8 @@ router.patch("/verify", catchErrors(verifyProcess))
 router.get("/logout", logoutProcess)
 
 router.get("/session", checkSession)
+
+router.patch("/info/change", isAuth, catchErrors(changeInfo))
 
 router.patch("/avatar/change", isAuth, catchErrors(changeAvatar))
 

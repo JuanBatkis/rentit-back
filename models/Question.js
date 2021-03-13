@@ -10,6 +10,10 @@ const questionSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Product"
   },
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: "User"
+  },
   description: String,
   status: {
     type: String,

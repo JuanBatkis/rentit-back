@@ -64,9 +64,6 @@ exports.getRentPreference = async (req, res) => {
 
   const response = await mercadopago.preferences.create(preference)
 
-  console.log(response.body.id);
-
-
   res.status(201).json({preferenceId: response.body.id})
 }
 
@@ -90,15 +87,11 @@ exports.createRent = async (req, res) => {
 exports.updateRent = async (req, res) => {
   const { preferenceId, status } = req.body
 
-  console.log(req.body)
-
   const rent = await Rent.findOneAndUpdate(
     {preferenceId},
     { $set: { status } },
     { new: true }
   ).populate("product","name")
-
-  console.log(rent);
 
   res.status(200).json(rent)
 }
