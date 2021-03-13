@@ -9,6 +9,7 @@ const session    = require("express-session");
 const MongoStore = require('connect-mongo')(session);
 const flash      = require("connect-flash");
 const cors       = require('cors')
+const path       = require("path")
 
 
 mongoose
@@ -33,7 +34,7 @@ app.use(
     credentials: true
   })
 )
-app.use(express.static('public'))
+app.use(express.static(path.join(__dirname, 'public')))
 
 // Enable authentication using session + passport
 app.use(session({
