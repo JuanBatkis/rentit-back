@@ -10,38 +10,42 @@ exports.getAllProducts = async (req, res) => {
 exports.getProductsByQuery = async (req, res) => {
   const { limit, category, center, radius } = req.body
 
-  const ownersInRadious = await User.find({
-    location: { $geoWithin: { $centerSphere: [ center, radius/6371 ] } }
-  }, '_id')
-  const onlyIds = ownersInRadious.map(owner => owner._id)
-
-  /* const products = await Product.find({
-    location: { $geoWithin: { $centerSphere: [ center, radius/6371 ] } }
-  }).sort({createdAt: -1}).populate("owner","location") */
-  /* const products = await Product.find().sort({createdAt: -1}).populate({
-    path: 'owner',
-    select: 'location',
-    match: {
-      location: { $geoWithin: { $centerSphere: [ center, radius/63710 ] } }
-    }
-  }) */
-  //const products = await Product.find({ category }).populate("owner","location")
-  /* const products = await Product.aggregate([
-    { "$lookup": {
-      "from": 'User',
-      "let": { "tags": "$tags" },
-      "pipeline": [
-        { "$match": {
-          "tags": { "$in": [ "politics", "funny" ] },
-          "$expr": { "$in": [ "$_id", "$$tags" ] }
-        }}
-      ]
-    }}
-  ]).sort({createdAt: -1}).populate("owner","location") */
-  const products = await Product.find({
-    owner: { $in: onlyIds }
-  }).sort({createdAt: -1})
-  res.status(200).json({ products })
+  try {
+    const ownersInRadious = await User.find({
+      location: { $geoWithin: { $centerSphere: [ center, radius/6371 ] } }
+    }, '_id')
+    const onlyIds = ownersInRadious.map(owner => owner._id)
+  
+    /* const products = await Product.find({
+      location: { $geoWithin: { $centerSphere: [ center, radius/6371 ] } }
+    }).sort({createdAt: -1}).populate("owner","location") */
+    /* const products = await Product.find().sort({createdAt: -1}).populate({
+      path: 'owner',
+      select: 'location',
+      match: {
+        location: { $geoWithin: { $centerSphere: [ center, radius/63710 ] } }
+      }
+    }) */
+    //const products = await Product.find({ category }).populate("owner","location")
+    /* const products = await Product.aggregate([
+      { "$lookup": {
+        "from": 'User',
+        "let": { "tags": "$tags" },
+        "pipeline": [
+          { "$match": {
+            "tags": { "$in": [ "politics", "funny" ] },
+            "$expr": { "$in": [ "$_id", "$$tags" ] }
+          }}
+        ]
+      }}
+    ]).sort({createdAt: -1}).populate("owner","location") */
+    const products = await Product.find({
+      owner: { $in: onlyIds }
+    }).sort({createdAt: -1})
+    res.status(200).json({ products })
+  } catch (error) {
+    res.status(403).json({ message: error })
+  }
 }
 
 exports.getProductById = async (req, res) => {

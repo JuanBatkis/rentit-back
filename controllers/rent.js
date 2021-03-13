@@ -6,9 +6,17 @@ exports.getAllUserRents = async (req, res) => {
   let rents
 
   if (role === 'renter') {
-    rents = await Rent.find({'renter': req.user._id}).populate("product","name images")
+    rents = await Rent
+      .find({$and: [{'renter': req.user._id}, {status: {$ne: 'pending'}}]})
+      .populate("product","name images")
+      .populate("owner","email firstName lastName storeName phone rating location")
+      .populate("renter","email firstName lastName storeName phone rating")
   } else {
-    rents = await Rent.find({'owner': req.user._id}).populate("product","name images")
+    rents = await Rent
+      .find({$and: [{'owner': req.user._id}, {status: {$ne: 'pending'}}]})
+      .populate("product","name images")
+      .populate("owner","email firstName lastName storeName phone rating location")
+      .populate("renter","email firstName lastName storeName phone rating")
   }
   res.status(200).json({ rents })
 }
