@@ -1,75 +1,96 @@
-const Product = require("../models/Product")
-const User = require("../models/User")
+const Rent = require("../models/Rent")
+const mercadopago = require("../config/mercadopago")
 
-exports.getAllProducts = async (req, res) => {
-  const products = await Product.find()
-  res.status(200).json({ products })
+exports.getAllUserRents = async (req, res) => {
+  const { role } = req.params
+  let rents
+
+  if (role === 'renter') {
+    rents = await Rent.find({'renter': req.user._id}).populate("product","name images")
+  } else {
+    rents = await Rent.find({'owner': req.user._id}).populate("product","name images")
+  }
+  res.status(200).json({ rents })
 }
 
-exports.getProductsByCategory = async (req, res) => {
-  const { category } = req.params
+exports.getRentById = async (req, res) => {
+  const { rentId } = req.params
 
-  const products = await Product.find({ category })
-  res.status(200).json({ products })
+  const rent = await Rent.findById(rentId)
+    .populate("owner","email firstName lastName storeName phone location")
+    .populate("product","name images")
+  res.status(200).json(rent)
 }
 
-exports.getProductById = async (req, res) => {
-  const { productId } = req.params
+exports.getRentPreference = async (req, res) => {
+  const { productId, productName, total, time } = req.body
 
-  const product = await Product.findById(productId)
-    .populate("owner","email firstName lastName storeName phone rating")
-    .populate("questions","description answer")
-  res.status(200).json(product)
-}
+  const title = `${productName} for ${time}`
+  const baseUrl = (process.env.ENV === 'development' ? 'http://localhost:3000' : 'https://rentit-project.herokuapp.com')
 
-exports.createProduct = async (req, res) => {
-  const { name, category, description, images, priceHour, priceDay } = req.body
-
-  if (!['Tools', 'Technology', 'Vehicles', 'Sports', 'Other'].includes(category)) {
-    return res.status(400).json({ message: "Please select one of the allowed categories" })
+  let preference = {
+    items: [
+      {
+        id: productId,
+        title,
+        unit_price: Number(total),
+        quantity: 1
+      }
+    ],
+    "payment_methods": {
+      "excluded_payment_types": [
+          {
+              "id": "ticket"
+          }
+      ],
+      "installments": 1
+    },
+    "statement_descriptor": "RENTIT",
+    notification_url: "https://webhook.site/1797d8db-4b84-4e9c-b608-0c12485f61aa",
+    back_urls: {
+      success: `${baseUrl}/success`,
+      failure: `${baseUrl}/failure`,
+      pending: `${baseUrl}/pending`
+    }
   }
 
-  const product = await Product.create({
-    name,
-    category,
-    description,
-    images,
-    priceHour,
-    priceDay,
-    owner: req.user._id
-  })
-  await User.findByIdAndUpdate(req.user._id, {
-    $push: { products: product._id }
-  })
+  const response = await mercadopago.preferences.create(preference)
 
-  res.status(201).json(product)
+  console.log(response.body.id);
+
+
+  res.status(201).json({preferenceId: response.body.id})
 }
 
-exports.updateProduct = async (req, res) => {
-  const { productId } = req.params
-  const { name, description, images, priceHour, priceDay } = req.body
+exports.createRent = async (req, res) => {
+  const { product, owner, total, rentedFrom, rentedTo, type, preferenceId } = req.body
 
-  const product = await Product.findById(productId)
+  const rent = await Rent.create({
+    product,
+    owner,
+    renter: req.user._id,
+    total,
+    rentedFrom,
+    rentedTo,
+    type,
+    preferenceId
+  })
 
-  if (product.owner.toString() !== req.user._id.toString()) {
-    return res.status(401).json({ message: "Unauthorized" })
-  }
+  res.status(201).json(rent)
+}
 
-  const productNew = await Product.findByIdAndUpdate(
-    productId,
-    { name, description, images, priceHour, priceDay },
+exports.updateRent = async (req, res) => {
+  const { preferenceId, status } = req.body
+
+  console.log(req.body)
+
+  const rent = await Rent.findOneAndUpdate(
+    {preferenceId},
+    { $set: { status } },
     { new: true }
-  )
+  ).populate("product","name")
 
-  res.status(200).json(productNew)
-}
+  console.log(rent);
 
-exports.deleteProduct = async (req, res) => {
-  const { productId } = req.params
-
-  await Product.findByIdAndRemove(productId)
-
-  res.status(200).json({
-    message: "deleted"
-  })
+  res.status(200).json(rent)
 }
